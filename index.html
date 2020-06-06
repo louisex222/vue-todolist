@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/fontawesome.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<style>
+    .done{
+      text-decoration: line-through;
+    }
+    @font-face{
+        font-family: 'Font Awesome 5 Brand';
+        src: url('/font/fa-brands-400.woff') format("woff"),
+            url('/font/fa-brands-400.ttp')  format("turetype"),
+            url('/font/fa-brands-400.eot') format("embedded-opentype");}
+           
+    
+        @font-face{
+        font-family: 'Font Awesome 5 Free Regular';
+        src :   url('/font/fa-regular-400.woff') format("woff"),
+                url('/font/fa-regular-400.ttp')  format("turetype"),
+                url('/font/fa-regular-400.eot') format("embedded-opentype");
+            }
+        @font-face{
+            font-family:'Font Awesome 5 Free Solid';
+            src: url('/font/fa-solid-900.woff') format("woff"),
+            url('/font/fa-solid-900.ttp')  format("turetype"),
+            url('/font/fa-solid-900.eot') format("embedded-opentype");}
+    
+
+i{
+    font-family: 'Font Awesome 5 Free Solid';
+    color: #27bceb;
+       
+}
+    *{
+      font-family: 微軟正黑體;
+      list-style: none;
+      text-decoration: none;
+    }
+    label{
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+    }
+    html,body{
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #app{
+      border: 5px solid #27bceb;
+      padding: 10px;
+      border-radius: 10px;
+      width: 500px;
+    }
+    #list{
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      
+    }
+    
+    #list  span{
+      
+      font-weight: 900;
+    }
+    #list button{
+      background-color: #27BCEB;
+      color: #fff;
+      border-radius: 0px 5px 5px 0;
+      outline: none;
+      border: 1px solid #2799EB;
+      
+    }
+    #list input{
+      margin-right: -3.5px;
+      outline: none;
+      padding: 0 0 0 5px;
+      border-radius: 5px 0 0 5px;
+      border: 1px solid #000;
+      
+    }
+    
+    #nav ul{
+      display: inline-block;
+      margin: 10px 0 10px 0;
+      padding: 0;
+      width: 100%;
+    }
+    #nav li{
+      float: left;
+      width: calc(92%/3);
+      text-align: center;
+      border: 1px solid #000;
+      border-radius: 5px;
+      margin: 0 5px;
+      
+    }
+    #nav a{
+      text-decoration: none;
+      color: #999;
+      
+    }
+    #nav .active{
+      color: #27BCEB;
+      font-weight: 900;
+    }
+    
+    #mission{
+      padding: 0 12px 0 5px;
+    }
+    #mission li{
+      margin-bottom: 10px;
+      border: 1px solid #000;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    #mission li:last-child{
+      margin: 0;
+
+    }
+    
+    #mission li >div{
+      grid-area:  1/1/1/1;
+      display: grid;
+      grid-template: 1fr / 90% 10%;
+      
+    }
+    #mission li >div div:first-child{
+      grid-area: 1/1/1/1;
+      
+      
+    }
+    #mission li >div div:last-child{
+      grid-area: 1/2/2/2;
+      border-radius: 5px;
+      background-color: #fff;
+      text-align: center;
+      align-self: center;
+    }
+    #mission li >div button span{
+      color: #777
+    }
+    #mission li >div button:hover span{
+      color: #000;
+      font-weight: 900;
+    }
+    #mission li >input:first-child{
+      width: 100%;
+    }
+    #footer{
+      display: grid;
+      grid-template: 1fr/ 50% 50%;
+      justify-items: center;
+      
+    }
+    #footer span{
+      grid-area: 1/1/2/2;
+    }
+    #footer a{
+      grid-area: 1/2/2/3;
+      text-decoration: none;
+      font-weight: 900;
+      color: #27bceb;
+    }
+    
+
+</style>
+<body>
+  <div id="app">
+    <div id="list">
+      <div>
+        <span>Newmission</span>
+      </div>
+      <div class="box">
+        <input type="text"   v-model="newMission" @keyup.enter="addMission">
+        <button type="button" @click="addMission">Add</button>
+      </div>
+    </div>
+
+    <div>
+      <div id="nav">
+        <ul >
+          <li >
+            <a  href="#"  :class="{active:look == 'all'}"  @click=" look = 'all'">All</a>
+          </li>
+          <li>
+            <a  href="#" :class="{active:look == 'doing'}" @click="look ='doing'">Doing</a>
+          </li>
+          <li >
+            <a  href="#" :class="{active:look == 'done'}" @click="look='done'">Done</a>
+          </li>
+        </ul>
+      </div>
+
+      <ul id="mission">
+        <li v-for="item in filterMission" @dblclick="editMission(item)">
+          <div v-if="item.id !== changeMission.id">
+            <div>
+              <input type="checkbox"  v-model="item.done">
+              <label  :class="{done: item.done}">
+               {{item.title}}
+              </label>
+            </div>
+            <div @click="removeMission(item)">
+              <i class="fa fa-trash" ></i>
+            </div>
+          </div>
+          <input type="text"  v-model="changeTitle" @keyup.enter="editDoneMission(item)"
+          @keyup.esc="leaveEdit()" v-if="item.id === changeMission.id">
+          <input type="date" placeholder="yyyy/mm/dd" id="deadline_date" v-model="item.date">
+          <input type="time" placeholder="hh:mm" id="deadline_time" v-model="item.time">
+        </li>
+      </ul>
+
+      <div id="footer">
+        <span>{{ undone.length }} mission not done</span>
+        <a href="#" @click="clearMission">Clear all mission</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js"></script>
+  
+  <script>
+
+
+      Vue.config.deltools = true
+    let vm = new Vue({
+        el: '#app',
+        data:{
+            index:0,
+           mission:[
+            {
+                title: 'practice',
+                id: 0,
+                done: false,
+                date:'',
+                time: ''
+            }
+           ],
+           newMission: '',
+           look: 'all',
+           changeTitle:'',
+           changeMission: []
+        },
+        
+        methods: {
+            addMission:function(){
+                if(this.newMission.trim() == ''){
+                    return
+                }
+                this.index++
+               this.mission.push({
+                   title: this.newMission,
+                   id: this.index,
+                   done:false,
+                   date:'',
+                  time: ''
+               })
+                this.newMission =''
+            },
+            removeMission: function(mission){
+                let key = ''
+                this.mission.forEach((item,index)=>{
+                    if(item.id == mission.id){
+                        key = index 
+                    }
+                })
+                this.mission.splice(key,1)
+            },
+            clearMission: function(){
+                this.mission = []
+            },
+            editMission:function(item){
+              this.changeTitle = item.title
+              this.changeMission = item
+            },
+            editDoneMission: function(item){
+                item.title = this.changeTitle
+                this.changeTitle=''
+                this.changeMission= []
+            },
+            leaveEdit: function(){
+                this.changeMission =[]
+            }
+            
+        },
+        computed:{
+            undone(){
+                return this.mission.filter((item)=>{
+                     return !item.done
+                })
+            },
+            filterMission(){
+                if(this.look =='all'){
+                    return this.mission
+                }else if(this.look =='doing'){
+                    let doingMission = []
+                    this.mission.forEach((item)=>{
+                        if(!item.done){
+                            doingMission.push(item)
+                        }
+                    })
+                    return doingMission
+                }else if (this.look =='done'){
+                    let doneMission =[]
+                    this.mission.forEach((item)=>{
+                        if(item.done){
+                            doneMission.push(item)
+                        }
+                    })
+                    return doneMission
+                }
+            }
+        }
+    })
+  </script>
+</body>
+</html>
